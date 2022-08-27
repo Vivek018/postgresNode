@@ -1,3 +1,10 @@
+CREATE TABLE departments (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    no_of_employees INT NOT NULL check(no_of_employees >= 0) DEFAULT 0
+);
+
+
 CREATE TABLE employees (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
@@ -5,14 +12,11 @@ CREATE TABLE employees (
     salary INT NOT NULL,
     bonus INT,
     joining_date DATE NOT NULL,
-    department_id BIGINT NOT NULL REFERENCES department(id)
+    department_id BIGINT NOT NULL REFERENCES departments(id)
 );
 
-CREATE TABLE departments (
-    id BIGSERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    no_of_employees INT NOT NULL check(no_of_employees >= 0) DEFAULT 0
-);
+INSERT INTO departments (name)
+VALUES ('Project Manager'), ('Software Engineer'), ('Human Resources'), ('Office Adminstration'), ('Tech Lead');
 
 INSERT INTO employees (
     name,
@@ -58,9 +62,6 @@ VALUES
         '5'
     )
 ;
-
-INSERT INTO departments (name)
-VALUES ('Project Manager'), ('Software Engineer'), ('Human Resources'), ('Office Adminstration'), ('Tech Lead');
 
 
 CREATE FUNCTION employees_count_update_to_department()

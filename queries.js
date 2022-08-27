@@ -18,10 +18,23 @@ const getEmployees = (_, res) => {
     });
 }
 
+const getEmployeesByDepartment = (req, res) => {
+    const id = parseInt(req.params.id);
+    const {date1, date2} = req.body;
+
+    pool.query("SELECT employees.name, employees.email, employees.salary, employees.bonus, employees.joining_date, departments.name AS department_name FROM employees join departments on employees.department_id = departments.id WHERE (joining_date BETWEEN $1 AND $2) AND employees.department_id = $3", [date1, date2, id] , 
+    (err, result) => {
+        if(err) {
+            throw err;
+        }
+        res.status(200).json(result.rows);
+    });
+}
+
 const getEmployee = (req, res) => {
     const id = parseInt(req.params.id);
 
-    pool.query('SELECT employees.name, employees.email, employees.salary, employees.bonus, employees.joining_date, departments.name AS department_name FROM employees left join departments on employees.department_id = departments.id WHERE employees.id = $1', [id], 
+    pool.query('SELECT employees.name, employees.email, employees.salary, employees.bonus, employees.joining_date, departments.name AS department_name FROM employees join departments on employees.department_id = departments.id WHERE employees.id = $1', [id], 
     (err, result) => {
         if(err) {
             throw err;
@@ -90,6 +103,7 @@ const deleteDepartment = (req, res) => {
 module.exports = {
     getEmployee,
     getEmployees,
+    getEmployeesByDepartment,
     getDepartments,
     createDepartment,
     createEmployee,

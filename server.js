@@ -10,6 +10,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.get('/employee/:id', db.getEmployee);
+app.get('/employeesByDepartment/:id', db.getEmployeesByDepartment);
 app.get('/employees', db.getEmployees);
 app.get('/departments', db.getDepartments);
 app.post('/employee', db.createEmployee);
