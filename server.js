@@ -9,14 +9,16 @@ app.use(bodyParser.urlencoded({
     extended: true,
 }));
 
-app.get('/users', db.getUsers);
-app.get('/users/:id', db.getUserById);
-app.post('/users', db.createUser);
-app.put('/users/:id', db.updateUser);
-app.delete('/users/:id', db.deleteUser);
+app.get('/employee/:id', db.getEmployee);
+app.get('/employees', db.getEmployees);
+app.get('/departments', db.getDepartments);
+app.post('/employee', db.createEmployee);
+app.post('/department', db.createDepartment);
+app.delete('/employee/:id', db.deleteEmployee);
+app.delete('/department/:id', db.deleteDepartment);
 
 app.listen(port, () => {
-    db.pool.connect((err, res) => {
+    db.pool.connect((err, _res) => {
         if(err) {
             throw err;
         }
