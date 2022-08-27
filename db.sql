@@ -15,6 +15,38 @@ CREATE TABLE employees (
     department_id BIGINT NOT NULL REFERENCES departments(id)
 );
 
+
+CREATE FUNCTION employees_count_update_department()
+    RETURNS TRIGGER AS $$
+    BEGIN
+	IF (TG_OP = 'INSERT') THEN          
+        UPDATE public.departments AS d
+        SET    no_of_employees = d.no_of_employees + 1
+        WHERE  d.id = NEW.department_id;
+        RETURN NEW; 
+    ELSEIF (TG_OP = 'DELETE') THEN
+        UPDATE public.departments AS d
+        SET    no_of_employees = d.no_of_employees - 1
+        WHERE  d.id = OLD.department_id
+        AND    d.no_of_employees > 0;
+        RETURN NEW;	
+    ELSE
+        RAISE EXCEPTION 'Unexpected TG_OP: "%". Should not occur!', TG_OP;
+    END IF; 
+END
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER no_of_employees_count_update
+    AFTER INSERT OR DELETE
+    ON public.employees
+    FOR EACH ROW
+    EXECUTE FUNCTION employee_count_update_department();
+
+
+
+
+
+
 INSERT INTO departments (name)
 VALUES ('Project Manager'), ('Software Engineer'), ('Human Resources'), ('Office Adminstration'), ('Tech Lead');
 
@@ -62,38 +94,4 @@ VALUES
         '5'
     )
 ;
-
-
-CREATE FUNCTION employees_count_update_to_department()
-    RETURNS TRIGGER
-    LANGUAGE plpgsql AS
-$func$
-BEGIN
-    CASE TG_OP
-    WHEN 'INSERT' THEN           
-        UPDATE departments AS d
-        SET    no_of_employees = d.no_of_employees + 1
-        WHERE  d.id = NEW.department_id; 
-    WHEN 'DELETE' THEN
-        UPDATE departments AS d
-        SET    no_of_employees = d.no_of_employees - 1
-        WHERE  d.id = OLD.department_id
-        AND    d.no_of_employees > 0;
-    ELSE
-        RAISE EXCEPTION 'Unexpected TG_OP: "%". Should not occur!', TG_OP;
-    END CASE;
-
-    RETURN NULL;   
-END
-$func$;
-
-
-CREATE TRIGGER no_of_employees_count_update
-    AFTER INSERT OR DELETE
-    ON employees
-    FOR EACH ROW
-    EXECUTE PROCEDURE employees_count_update_to_department();
-
-
-
 
