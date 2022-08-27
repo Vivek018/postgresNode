@@ -1,12 +1,4 @@
-const Pool = require("pg").Pool;
-
-const pool = new Pool({
-    user: "me",
-    host: "localhost",
-    database: "api",
-    password: "password",
-    port: 5432,
-});
+const pool = require("./postgres");
 
 const getEmployees = (_, res) => {
     pool.query('SELECT * FROM employees ORDER BY id ASC', 
