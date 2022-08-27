@@ -1,5 +1,7 @@
-var pg = require('pg');
-var client = new pg.Client("postgres:/.elephantsql.com:postgres://vvssnvpf:tzYj0uLkLnPiQNPX9ENhfm5PxUkg2OXE@tai.db.elephantsql.com/vvssnvpf");
+var {Pool} = require('pg');
+var client = new Pool({
+    connectionString: "postgres://vvssnvpf:tzYj0uLkLnPiQNPX9ENhfm5PxUkg2OXE@tai.db.elephantsql.com/vvssnvpf"
+    });
 
 client.connect(function(err) {
     if(err) {
